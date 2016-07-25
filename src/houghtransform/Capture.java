@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package houghtransform1;
+package houghtransform;
 
+import houghtransform.transform_process.MyTransform;
+import houghtransform.transform_process.OpenCV;
+import houghtransform.transform_process.Transform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
@@ -54,11 +58,14 @@ public class Capture implements Runnable{
     private boolean shouldStop = false;
     static CaptureJFrame syncJFrame;
     int i;
+    int choiceT;
+    Transform transf;
     
-    public Capture(CaptureJFrame sync, VideoCapture webCam, int i) {
+    public Capture(CaptureJFrame sync, VideoCapture webCam, int i, int choiceT) {
         this.webCam = webCam;
         syncJFrame = sync;
         this.i = i;
+        this.choiceT = choiceT;
         
         t = new Thread(this, "Thread " + i);
     }
@@ -77,32 +84,33 @@ public class Capture implements Runnable{
         
         Mat scr = new Mat();
         Mat edges = new Mat();
-        Mat lines = new Mat();
-        
+                
         while(!shouldStop) {
-            webCam.read(scr);
-        
-            // Canny Edge Detector
-            Imgproc.Canny(scr, edges, 50, 200, 3, false);
-            
-            // Hough Transform
-            Imgproc.HoughLines(edges, lines, 1, Math.PI/180, 100, 0, 0, 0, Math.PI);
-        
-            for (int x = 1; x < lines.rows(); x++) {
-                double[] vec = lines.get(x, 0);
-                double rho = vec[0], theta1 = vec[1];
-                Point pt1 = new Point();
-                Point pt2 = new Point();
-                double a = Math.cos(theta1), b = Math.sin(theta1);
-                double x0 = a*rho, y0 = b*rho;
-                pt1.x = Math.round(x0 + 1000 * (-b));
-                pt1.y = Math.round(y0 + 1000 * (a));
-                pt2.x = Math.round(x0 - 1000 * (-b));
-                pt2.y = Math.round(y0 - 1000 * (a));
-            
-                Imgproc.line(scr, pt1, pt2, new Scalar(0,0,255), 1);
+            try {
+                webCam.read(scr);
+                
+                // Canny Edge Detector
+                Imgproc.Canny(scr, edges, 50, 200, 3, false);
+                
+                // Hough Transform
+                
+                switch(choiceT) {
+                    case 1:
+                        transf = new OpenCV();
+                        break;
+                    case 2:
+                        transf = new MyTransform();
+                        break;
+                    default:
+                        throw new IOException("Transform wasn't choiced!!!");
+                }
+                transf.houghTransform(edges);
+                scr = transf.drawLines(scr);
+                
+                syncJFrame.showVideo(convertMatToBufferedImage(edges), convertMatToBufferedImage(scr));
+            } catch (IOException ex) {
+                Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
             }
-            syncJFrame.showVideo(convertMatToBufferedImage(edges), convertMatToBufferedImage(scr));
         }
-    }  
+    }
 }

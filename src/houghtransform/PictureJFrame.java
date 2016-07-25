@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package houghtransform1;
+package houghtransform;
 
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;

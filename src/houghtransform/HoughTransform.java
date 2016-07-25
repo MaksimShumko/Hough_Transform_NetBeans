@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package houghtransform1;
+package houghtransform;
 
 import java.awt.FileDialog;
 import java.awt.Toolkit;
@@ -52,12 +52,15 @@ public class HoughTransform extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jTextField_FileName = new javax.swing.JTextField();
         jButton_Transform = new javax.swing.JButton();
         jButton_OpenFile = new javax.swing.JButton();
         jButton_Capture = new javax.swing.JButton();
         jButton_Exit = new javax.swing.JButton();
+        jRadioButton_OpenCV = new javax.swing.JRadioButton();
+        jRadioButton_MyTransform = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -113,6 +116,13 @@ public class HoughTransform extends javax.swing.JFrame {
             }
         });
 
+        buttonGroup1.add(jRadioButton_OpenCV);
+        jRadioButton_OpenCV.setSelected(true);
+        jRadioButton_OpenCV.setText("OpenCV");
+
+        buttonGroup1.add(jRadioButton_MyTransform);
+        jRadioButton_MyTransform.setText("MyTransform");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -125,7 +135,10 @@ public class HoughTransform extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton_Exit))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton_Capture)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButton_MyTransform)
+                            .addComponent(jRadioButton_OpenCV)
+                            .addComponent(jButton_Capture))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -136,7 +149,11 @@ public class HoughTransform extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton_Capture)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 203, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioButton_OpenCV)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButton_MyTransform)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
                 .addComponent(jButton_Exit)
                 .addContainerGap())
         );
@@ -146,11 +163,18 @@ public class HoughTransform extends javax.swing.JFrame {
 
     private void jButton_TransformMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_TransformMousePressed
         String fileName = jTextField_FileName.getText();
-        
+        int choiceT;
         try {
-            final Picture x = new Picture(fileName);
+            if(jRadioButton_OpenCV.isSelected())
+                choiceT = 1;
+            else if (jRadioButton_MyTransform.isSelected())
+                choiceT = 2;
+            else 
+                throw new IOException("Must be selected!!!");
+            
+            final Picture x = new Picture(fileName, choiceT);
         } catch (IOException ex) {
-            System.out.println("File not exist!!!");
+            System.out.println("File not exist!!!" + ex);
         }
     }//GEN-LAST:event_jButton_TransformMousePressed
 
@@ -170,11 +194,19 @@ public class HoughTransform extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_OpenFileMousePressed
 
     private void jButton_CaptureMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton_CaptureMousePressed
+        int choiceT;
         try {
-            CaptureJFrame x = new CaptureJFrame();
+            if(jRadioButton_OpenCV.isSelected())
+                choiceT = 1;
+            else if (jRadioButton_MyTransform.isSelected())
+                choiceT = 2;
+            else 
+                throw new IOException("Must be selected!!!");
+            
+            CaptureJFrame x = new CaptureJFrame(choiceT);
             x.setVisible(true);
         } catch (IOException ex) {
-            System.out.println("No access to camera!!!");
+            System.out.println("No access to camera!!!" + ex);
         }
     }//GEN-LAST:event_jButton_CaptureMousePressed
 
@@ -219,11 +251,14 @@ public class HoughTransform extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton_Capture;
     private javax.swing.JButton jButton_Exit;
     private javax.swing.JButton jButton_OpenFile;
     private javax.swing.JButton jButton_Transform;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton jRadioButton_MyTransform;
+    private javax.swing.JRadioButton jRadioButton_OpenCV;
     private javax.swing.JTextField jTextField_FileName;
     // End of variables declaration//GEN-END:variables
 }

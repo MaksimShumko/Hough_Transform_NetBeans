@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package houghtransform1;
+package houghtransform;
 
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -24,7 +24,8 @@ import static org.opencv.videoio.Videoio.*;
  * @author Maksim
  */
 public class CaptureJFrame extends javax.swing.JFrame {
-
+    int choiceT;
+    
     final int thrN = 4;
     Capture[] thread = new Capture[thrN];
     
@@ -42,10 +43,13 @@ public class CaptureJFrame extends javax.swing.JFrame {
       
     /**
      * Creates new form CaptureJFrame
+     * @param choiceT
      * @throws java.io.IOException
      */
-    public CaptureJFrame() throws IOException {
+    public CaptureJFrame(int choiceT) throws IOException {
         initComponents();
+        
+        this.choiceT = choiceT;
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -80,7 +84,7 @@ public class CaptureJFrame extends javax.swing.JFrame {
         this.setSize(width * 2 + 25, height + 80);
         
         for(int i = 0; i < thrN; i++) {
-            thread[i] = new Capture(this, webCam, i);
+            thread[i] = new Capture(this, webCam, i, choiceT);
             thread[i].start();
         }
         
@@ -119,6 +123,7 @@ public class CaptureJFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        jTextField1.setEditable(false);
         jTextField1.setText("0");
 
         jButton1.setText("jButton1");
@@ -165,8 +170,9 @@ public class CaptureJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1MousePressed
 
     /**
+     * @param i
      */
-    public static void main() {
+    public static void main(final int i) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -195,7 +201,7 @@ public class CaptureJFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 try {
-                    new CaptureJFrame().setVisible(true);
+                    new CaptureJFrame(i).setVisible(true);
                 } catch (IOException ex) {
                     System.out.println("No access to camera!!!");
                 }
