@@ -18,7 +18,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 /**
- *
  * @author Maksim
  */
 public class Capture implements Runnable{
